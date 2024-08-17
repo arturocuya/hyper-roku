@@ -2,5 +2,8 @@
     <script type="text/brightscript" uri="MainScene.bs" />
     <children>
         <Label id="welcome" translation="[96, 54]" />
+        <Button id="myButton" text="Press me" translation="[96, 100]"/>
+
+        <Group id="targetGroup" translation="[96, 200]"/>
     </children>
 </component>

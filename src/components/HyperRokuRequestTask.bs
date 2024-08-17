@@ -1,0 +1,19 @@
+import "pkg:/source/lib/Requests.brs"
+import "pkg:/source/lib/promises.bs"
+
+sub init()
+    m.top.functionName = "execute"
+end sub
+
+function getPromise(verb as string, url as string) as object
+    m.promise = promises.create()
+    m.verb = verb
+    m.url = url
+    m.top.control = "RUN"
+    return m.promise
+end function
+
+sub execute()
+    response = Requests().request(m.verb, m.url, {})
+    promises.resolve(response.json, m.promise)
+end sub

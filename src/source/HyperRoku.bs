@@ -1,0 +1,71 @@
+import "pkg:/source/lib/promises.bs"
+
+namespace HyperRoku
+    sub attach(source as object, params as object)
+        url = params.url
+        target = params.target
+        trigger = params.trigger
+
+        if (url = invalid or url = "")
+            ? "attach error: url is required"
+            return
+        end if
+
+        if (target = invalid or target = "")
+            ? "attach error: target is required or invalid"
+            return
+        end if
+
+        targetNode = m.top.findNode(target) = invalid
+
+        if (targetNode = invalid)
+            ? "attach error: target node not found in m.top"
+            return
+        end if
+
+        if (not source.hasField(trigger))
+            ? "attach error: trigger field not found in source"
+            return
+        end if
+
+        if (not source.hasField("HyperRokuParams"))
+            ? "asdfasdf"
+            source.AddField("HyperRokuParams", "assocarray", false)
+        end if
+
+        source.HyperRokuParams = params
+
+        source.observeFieldScoped(trigger, "HyperRoku_onTrigger")
+    end sub
+
+    sub onTrigger(msg as object)
+        ? "ontrigger"
+        source = msg.GetRoSGNode()
+        task = CreateObject("roSGNode", "HyperRokuRequestTask")
+        promise = task@.getPromise(source.HyperRokuParams.verb, source.HyperRokuParams.url)
+        promises.onThen(promise, HyperRoku.applyResult, { source: source })
+    end sub
+
+    sub applyResult(result as object, ctx as object)
+        source = ctx.source
+        params = source.HyperRokuParams
+
+        if (result._children <> invalid)
+            result.children = result._children
+            result.Delete("_children")
+        end if
+
+        if (params.swap = "inner")
+            targetNode = m.top.findNode(params.target)
+            targetNode.RemoveChildrenIndex(targetNode.getChildCount(), 0)
+            targetNode.update(result)
+        else if (params.swap = "outer")
+            ' params.target.getParent().
+            ' TODO
+        else if (params.swap = "content")
+            contentNode = CreateObject("roSGNode", result.subType)
+            contentNode.update(result)
+            params.target.content = contentNode
+        end if
+    end sub
+end namespace

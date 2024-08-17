@@ -1,0 +1,7 @@
+<component name="HyperRokuRequestTask" extends="Task">
+    <script type="text/brightscript" uri="HyperRokuRequestTask.bs" />
+    <interface>
+        <function name="getPromise" />
+
+    </interface> 
+</component>

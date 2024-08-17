@@ -1,3 +1,5 @@
+import "pkg:/source/HyperRoku.bs"
+
 sub init()
     label = m.top.findNode("welcome")
     label.text = "Hello from create-roku-app"
@@ -6,4 +8,16 @@ sub init()
     ' Specified in section 3.2 of the Roku Certification Criteria.
     ' Reference: https://developer.roku.com/docs/developer-program/certification/certification.md#3-performance
     m.top.signalBeacon("AppLaunchComplete")
+
+    m.top.findNode("myButton").setFocus(true)
+
+    HyperRoku.attach(m.top.findNode("myButton"), {
+        verb: "GET",
+        url: "http://192.168.18.19:1323/hello-world",
+        trigger: "buttonSelected",
+        target: "targetGroup",
+        swap: "inner"
+    })
+
+    ' m.top.findNode("targetGroup").update({ children: [{subtype: "Label", text: "hello"}] })
 end sub
